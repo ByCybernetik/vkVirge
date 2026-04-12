@@ -144,6 +144,8 @@ private:
     VkCommandPool commandPool;
     VkBuffer vertexBuffer;
     VkDeviceMemory vertexBufferMemory;
+    uint32_t graphicsFamily = UINT32_MAX;
+    uint32_t presentFamily = UINT32_MAX;
 
     void initWindow() {
         glfwInit();
@@ -214,8 +216,6 @@ private:
         std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
         vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queueFamilyCount, queueFamilies.data());
 
-        uint32_t graphicsFamily = UINT32_MAX;
-        uint32_t presentFamily = UINT32_MAX;
         for (uint32_t i = 0; i < queueFamilyCount; i++) {
             if (queueFamilies[i].queueFlags & VK_QUEUE_GRAPHICS_BIT) {
                 graphicsFamily = i;
@@ -331,8 +331,14 @@ private:
         createInfo.imageArrayLayers = 1;
         createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 
-        uint32_t queueFamilyIndices[] = {0, 0}; // Simplified
-        createInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
+        uint32_t queueFamilyIndices[] = {graphicsFamily, presentFamily};
+        if (graphicsFamily != presentFamily) {
+            createInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
+            createInfo.queueFamilyIndexCount = 2;
+            createInfo.pQueueFamilyIndices = queueFamilyIndices;
+        } else {
+            createInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
+        }
 
         createInfo.preTransform = capabilities.currentTransform;
         createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
