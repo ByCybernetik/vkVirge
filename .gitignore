@@ -1,1 +1,53 @@
-Nothing should be ignored since only a source code file (`main.cpp`) was modified and there are no build artifacts, dependencies, or temporary files in the changes.
+```
+# CMake build artifacts
+build/
+CMakeCache.txt
+CMakeFiles/
+Makefile
+cmake_install.cmake
+
+# Compiled objects and executables
+*.o
+*.obj
+*.bin
+*.out
+*.a
+*.so
+*.dll
+*.exe
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*.tmp
+
+# Logs
+*.log
+
+# Coverage reports
+coverage/
+htmlcov/
+.coverage
+
+# Environment files
+.env
+.env.local
+.env.*
+
+# Python specific
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+
+# Node.js specific
+node_modules/
+
+# Virtual environments
+venv/
+.venv/
+```

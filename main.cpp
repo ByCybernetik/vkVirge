@@ -1,4 +1,3 @@
-#define VK_NO_PROTOTYPES
 #include <vulkan/vulkan.h>
 #include <GLFW/glfw3.h>
 
@@ -6,6 +5,8 @@
 #include <vector>
 #include <cstdlib>
 #include <cstdint>
+#include <cstring>
+#include <array>
 
 const uint32_t WIDTH = 800;
 const uint32_t HEIGHT = 600;
@@ -421,8 +422,11 @@ private:
     }
 
     void createGraphicsPipeline() {
-        VkShaderModule vertShaderModule = createShaderModule(vertShaderCode);
-        VkShaderModule fragShaderModule = createShaderModule(fragShaderCode);
+        std::vector<uint32_t> vertCode(vertShaderCode, vertShaderCode + sizeof(vertShaderCode)/sizeof(uint32_t));
+        std::vector<uint32_t> fragCode(fragShaderCode, fragShaderCode + sizeof(fragShaderCode)/sizeof(uint32_t));
+        
+        VkShaderModule vertShaderModule = createShaderModule(vertCode);
+        VkShaderModule fragShaderModule = createShaderModule(fragCode);
 
         VkPipelineShaderStageCreateInfo vertShaderStageInfo{};
         vertShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
@@ -455,12 +459,14 @@ private:
         colorDescription.format = VK_FORMAT_R32G32B32_SFLOAT;
         colorDescription.offset = offsetof(Vertex, color);
 
-        VkVertexInputStateCreateInfo vertexInputInfo{};
+        std::array<VkVertexInputAttributeDescription, 2> attributeDescriptions = {positionDescription, colorDescription};
+
+        VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
         vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
         vertexInputInfo.vertexBindingDescriptionCount = 1;
         vertexInputInfo.pVertexBindingDescriptions = &bindingDescription;
-        vertexInputInfo.vertexAttributeDescriptionCount = 2;
-        vertexInputInfo.pVertexAttributeDescriptions = &positionDescription;
+        vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
+        vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
 
         VkPipelineInputAssemblyStateCreateInfo inputAssembly{};
         inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
