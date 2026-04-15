@@ -1,0 +1,14 @@
+; ddraw.def - Module definition file for DirectDraw wrapper
+LIBRARY ddraw
+EXPORTS
+    DirectDrawCreate
+    DirectDrawCreateEx
+    DirectDrawCreateClipper
+    DirectDrawEnumerateA
+    ; DirectDrawEnumerateW      ; <- убрать или закомментировать
+    DirectDrawEnumerateExA
+    ; DirectDrawEnumerateExW    ; <- убрать или закомментировать
+
+    ; Aliases
+    DirectDrawEnumerate = DirectDrawEnumerateA
+    DirectDrawEnumerateEx = DirectDrawEnumerateExA
